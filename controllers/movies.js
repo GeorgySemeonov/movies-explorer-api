@@ -5,6 +5,7 @@ const NotFoundError = require('../errors/NotFoundError');
 const ForbiddenError = require('../errors/ForbiddenError');
 
 // Добавить новый фильм
+
 module.exports.addMovie = (req, res, next) => {
   const {
     country,

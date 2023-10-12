@@ -4,6 +4,7 @@ const { regexp } = require('../utils/regexp');
 const { addMovie, getMovies, deleteMovie } = require('../controllers/movies');
 
 router.get('/movies', getMovies);
+
 router.post('/movies', celebrate({
   body: Joi.object().keys({
     country: Joi.string().required(),
