@@ -13,15 +13,17 @@ const MoviesRouter = require('./routes/movies');
 const UserRouter = require('./routes/users');
 const { login, createUser } = require('./controllers/users');
 const { regexp } = require('./utils/regexp');
+const { rateLimiter } = require('./utils/limiter');
 const NotFoundError = require('./errors/NotFoundError');
+const errorHandler = require('./middlewares/errorHandler');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const auth = require('./middlewares/auth');
 
 const app = express();
-const { PORT = 3000 } = process.env;
+const { PORT = 3000, MONGO_URL } = process.env;
 
-mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
+mongoose.connect(MONGO_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
@@ -65,16 +67,18 @@ app.use('/api', MoviesRouter);
 app.use('/api', UserRouter);
 app.use('/*', (req, res, next) => next(new NotFoundError('Страница не найдена')));
 
+app.use(rateLimiter);
 app.use(errorLogger);
 app.use(errors());
+app.use(errorHandler);
 // eslint-disable-next-line no-unused-vars
-app.use((err, req, res, next) => {
-  const { statusCode = 500, message } = err;
-  res.status(statusCode).send(
-    { message: statusCode === 500 ? 'На сервере произошла ошибка' : message },
-  );
-  console.log(message);
-});
+// app.use((err, req, res, next) => {
+//   const { statusCode = 500, message } = err;
+//   res.status(statusCode).send(
+//     { message: statusCode === 500 ? 'На сервере произошла ошибка' : message },
+//   );
+//   console.log(message);
+// });
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}`);
