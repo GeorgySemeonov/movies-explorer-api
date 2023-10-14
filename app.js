@@ -15,7 +15,7 @@ const { login, createUser } = require('./controllers/users');
 const { regexp } = require('./utils/regexp');
 const { rateLimiter } = require('./utils/limiter');
 const NotFoundError = require('./errors/NotFoundError');
-const errorHandler = require('./middlewares/errorHandler');
+const { errorHandler } = require('./middlewares/errorHandler');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const auth = require('./middlewares/auth');
